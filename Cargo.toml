@@ -8,4 +8,5 @@ edition = "2021"
 [dependencies]
 chrono = "0.4.30"
 linked-hash-map = "0.5.6"
+serde = "1.0.188"
 yaml-rust = "0.4.5"

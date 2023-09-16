@@ -2,7 +2,7 @@ use linked_hash_map::LinkedHashMap;
 use std::{fs::{self, File}, io::Read};
 use yaml_rust::{Yaml, YamlLoader};
 
-const DIR:&str = "/Users/thompsontong/Documents/projects/2023/norg/sample-data";
+//const DIR:&str = "/Users/thompsontong/Documents/projects/2023/norg/sample-data";
 
 pub fn read_file(filename: &str) -> Result<LinkedHashMap<Yaml, Yaml>, std::io::Error> {
     let mut file = File::open(filename).expect("Unable to open file");
@@ -17,10 +17,10 @@ pub fn read_file(filename: &str) -> Result<LinkedHashMap<Yaml, Yaml>, std::io::E
     Ok(map.to_owned())
 }
 
-pub fn generate_category_list() -> Vec<String> {
+pub fn generate_category_list(dir: &str) -> Vec<String> {
     let mut file_list: Vec<String> = Vec::new();
     let paths =
-        fs::read_dir(DIR).unwrap();
+        fs::read_dir(dir).unwrap();
 
     for path in paths {
         let temp = path.unwrap().path().to_owned();

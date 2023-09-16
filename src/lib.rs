@@ -5,11 +5,11 @@
 //use helper::generate_category_list;
 //use rosetta::generate_category_struct;
 
-mod agenda;
-mod category;
-mod donna;
-mod helper;
-mod rosetta;
+pub mod agenda;
+pub mod category;
+pub mod donna;
+pub mod helper;
+pub mod rosetta;
 
 //fn main() {
 //    let file_list: Vec<String> = generate_category_list();

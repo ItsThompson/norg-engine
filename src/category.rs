@@ -1,9 +1,10 @@
 use chrono::prelude::*;
+use serde::Serialize;
 
 // category.rs
 //      structs and impls relating to category
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct Category {
     pub name: String,
     pub id: u32,
@@ -12,20 +13,20 @@ pub struct Category {
     pub todo: Vec<TodoItem>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize)]
 pub struct PropertiesItem {
     pub key: String,
     pub value: String,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ScheduleItem {
     pub name: String,
     pub date: Date,
     pub recurring: Recurrence,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct Date {
     pub year: u16,
     pub month: u8,
@@ -174,7 +175,7 @@ impl Date {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub enum Recurrence {
     None,
     Daily,
@@ -182,7 +183,7 @@ pub enum Recurrence {
     Monthly,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct TodoItem {
     pub todo_id: u32,
     pub parent: TodoParent,
@@ -190,7 +191,7 @@ pub struct TodoItem {
     pub date: Date,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub enum TodoParent {
     None,
     TodoID(u32),
