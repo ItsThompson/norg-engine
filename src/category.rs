@@ -1,3 +1,5 @@
+use std::usize;
+
 use chrono::prelude::*;
 use serde::Serialize;
 
@@ -70,6 +72,20 @@ impl Date {
         }
     }
 
+    pub fn is_valid_date_and_time(&self) -> bool {
+        let u16_zero: &u16 = &0;
+        let u8_zero: &u8 = &0;
+        if &self.year == u16_zero
+            && &self.month == u8_zero
+            && &self.day == u8_zero
+            && &self.start_time == u16_zero
+            && &self.end_time == u16_zero
+        {
+            false
+        } else {
+            true
+        }
+    }
     pub fn is_valid_date(&self) -> bool {
         let u16_zero: &u16 = &0;
         let u8_zero: &u8 = &0;
@@ -98,58 +114,38 @@ impl Date {
         weekday
     }
 
-    pub fn to_string(&self) -> String {
+    pub fn get_date_string(&self) -> String {
         let data = &self.to_owned();
-
         if !data.is_valid_date() {
             return String::from("Invalid Date");
         }
+        //let local: DateTime<Local> = Local.with_ymd_and_hms(2023, 10, 2, 0, 0, 0).unwrap();
+        let year = usize::try_from(data.year).unwrap();
+        let month = usize::try_from(data.month).unwrap();
+        let day = usize::try_from(data.day).unwrap();
+        let months: [&str; 12] = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ];
 
-        fn format_month_or_day(number: u8) -> String {
-            let mut return_string: String = String::from("0");
-            let num_string: &str = &number.to_string();
-            if num_string.len() == 1 {
-                return_string.push_str(num_string);
-            } else {
-                return_string = String::from(num_string);
-            }
-            return_string
-        }
+        String::from(format!("{} {} {}", day, months[month - 1], year))
+    }
 
-        fn format_time(number: u16) -> String {
-            let mut date_string: String = String::new();
-            let num_string: &str = &number.to_string();
-            match num_string.len() {
-                1 => {
-                    date_string = String::from("00:0");
-                    date_string.push_str(num_string);
-                }
-                2 => {
-                    date_string = String::from("00:");
-                    date_string.push_str(num_string);
-                }
-                3 => {
-                    date_string = String::from("0");
+    pub fn to_string(&self) -> String {
+        let data = &self.to_owned();
 
-                    date_string.push_str(num_string);
-
-                    let mut return_string: String = (&date_string[0..2].to_string()).to_owned();
-                    return_string.push_str(":");
-                    return_string.push_str(&date_string[2..].to_string());
-
-                    date_string = return_string;
-                }
-                4 => {
-                    let mut return_string: String = (&num_string[0..2].to_string()).to_owned();
-                    return_string.push_str(":");
-                    return_string.push_str(&num_string[2..].to_string());
-
-                    date_string = return_string;
-                }
-                _ => {}
-            }
-
-            date_string
+        if !data.is_valid_date_and_time() {
+            return String::from("Invalid Date And Time");
         }
 
         let year = data.year.to_string();
@@ -173,6 +169,77 @@ impl Date {
 
         date_string
     }
+
+    pub fn start_time_string(&self) -> String {
+        let data = &self.to_owned();
+
+        if !data.is_valid_date_and_time() {
+            return String::from("Invalid Date And Time");
+        }
+
+        let start = format_time(data.start_time);
+
+        start
+    }
+
+    pub fn end_time_string(&self) -> String {
+        let data = &self.to_owned();
+
+        if !data.is_valid_date_and_time() {
+            return String::from("Invalid Date And Time");
+        }
+
+        let end = format_time(data.end_time);
+
+        end
+    }
+}
+
+fn format_month_or_day(number: u8) -> String {
+    let mut return_string: String = String::from("0");
+    let num_string: &str = &number.to_string();
+    if num_string.len() == 1 {
+        return_string.push_str(num_string);
+    } else {
+        return_string = String::from(num_string);
+    }
+    return_string
+}
+
+fn format_time(number: u16) -> String {
+    let mut date_string: String = String::new();
+    let num_string: &str = &number.to_string();
+    match num_string.len() {
+        1 => {
+            date_string = String::from("00:0");
+            date_string.push_str(num_string);
+        }
+        2 => {
+            date_string = String::from("00:");
+            date_string.push_str(num_string);
+        }
+        3 => {
+            date_string = String::from("0");
+
+            date_string.push_str(num_string);
+
+            let mut return_string: String = (&date_string[0..2].to_string()).to_owned();
+            return_string.push_str(":");
+            return_string.push_str(&date_string[2..].to_string());
+
+            date_string = return_string;
+        }
+        4 => {
+            let mut return_string: String = (&num_string[0..2].to_string()).to_owned();
+            return_string.push_str(":");
+            return_string.push_str(&num_string[2..].to_string());
+
+            date_string = return_string;
+        }
+        _ => {}
+    }
+
+    date_string
 }
 
 #[derive(Debug, Copy, Clone, Serialize)]

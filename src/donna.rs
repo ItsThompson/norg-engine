@@ -4,7 +4,7 @@ use chrono::prelude::*;
 use std::collections::HashMap;
 
 // donna.rs
-// generates vec<AgendaDay>
+// generates Vec<AgendaDay>
 
 // Generate vector for next X(default 14) days from today
 const AGENDA_DATES_IN_SCOPE: usize = 30;
@@ -98,6 +98,7 @@ fn generated_agenda_hashmap(
     agenda_date_map
 }
 
+// TODO: Sort
 fn generate_agenda_day(
     agenda_dates_arr: [Date; AGENDA_DATES_IN_SCOPE],
     agenda_date_map: HashMap<usize, Option<Vec<AgendaItem>>>,
@@ -113,9 +114,9 @@ fn generate_agenda_day(
                 agenda_items: None,
             });
         } else {
-            let vec = option.to_owned().unwrap();
+            let sorted_vec = sort_agenda_items(option.to_owned().unwrap());
             let mut agenda_items: Vec<AgendaItem> = Vec::new();
-            for agenda_item in vec {
+            for agenda_item in sorted_vec {
                 let id = agenda_item.category_id;
                 let agenda_type: AgendaType = agenda_item.agenda_type.to_owned();
                 match agenda_type {
@@ -140,4 +141,42 @@ fn generate_agenda_day(
         }
     }
     agenda_data
+}
+
+fn sort_agenda_items(unsorted: Vec<AgendaItem>) -> Vec<AgendaItem> {
+    // Unsorted is on the same day -> Sort by start_time (u16)
+    let mut data: Vec<AgendaItem> = unsorted.to_owned();
+    let mut i = 0;
+    let mut sorted: bool = true;
+    let max = data.len() - 1;
+
+    fn get_start_time(agenda_type: AgendaType) -> u16 {
+        match agenda_type {
+            AgendaType::ScheduleItem(schedule_item) => {
+                return schedule_item.date.start_time;
+            }
+            AgendaType::TodoItem(todo_item) => {
+                return todo_item.date.start_time;
+            }
+        }
+    }
+
+    loop {
+        if i < max {
+            let first = get_start_time(data[i].agenda_type.clone());
+            let second = get_start_time(data[i + 1].agenda_type.clone());
+            if first > second {
+                data.swap(i, i + 1);
+                sorted = false;
+            }
+            i += 1;
+        } else {
+            if sorted == true {
+                break;
+            }
+            i = 0;
+            sorted = true;
+        }
+    }
+    data
 }
